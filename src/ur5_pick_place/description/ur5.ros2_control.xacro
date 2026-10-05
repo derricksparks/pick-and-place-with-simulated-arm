@@ -1,0 +1,78 @@
+<?xml version="1.0"?>
+<!--
+  ros2_control block for the UR5, to be xacro:included from your main
+  description xacro (the entry file cloned from Universal_Robots_ROS2_Description,
+  the one with <xacro:arg name="tf_prefix" default="" /> near the top).
+
+  That file doesn't define a joint-name prefix itself — it passes "tf_prefix"
+  down into ur_macro.xacro, which prepends it to every joint name. Since
+  tf_prefix defaults to "", your joint names are plain (shoulder_pan_joint,
+  not something_shoulder_pan_joint) unless you explicitly set tf_prefix
+  elsewhere (e.g. for a multi-arm cell in project 3). For this project, add
+  these two lines near the bottom of that entry file, after the
+  <xacro:include filename="$(find ur_description)/urdf/ur_macro.xacro"/> line
+  and after wherever it calls the ur_robot macro:
+
+      <xacro:include filename="$(find ur5_pick_place)/description/ur5.ros2_control.xacro" />
+      <xacro:ur5_ros2_control name="GazeboSystem" prefix="$(arg tf_prefix)" />
+
+  `$(arg tf_prefix)` reuses the same xacro:arg already declared at the top of
+  that file, so it resolves to "" by default — matching the joint names
+  ur_macro.xacro actually generates, with nothing to type in by hand.
+-->
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <xacro:macro name="ur5_ros2_control" params="name prefix">
+
+    <ros2_control name="${name}" type="system">
+
+      <hardware>
+        <!-- Gazebo Classic (what the Humble/Docker container installs) -->
+        <plugin>gazebo_ros2_control/GazeboSystem</plugin>
+      </hardware>
+
+      <joint name="${prefix}shoulder_pan_joint">
+        <command_interface name="position"/>
+        <state_interface name="position"/>
+        <state_interface name="velocity"/>
+      </joint>
+      <joint name="${prefix}shoulder_lift_joint">
+        <command_interface name="position"/>
+        <state_interface name="position"/>
+        <state_interface name="velocity"/>
+      </joint>
+      <joint name="${prefix}elbow_joint">
+        <command_interface name="position"/>
+        <state_interface name="position"/>
+        <state_interface name="velocity"/>
+      </joint>
+      <joint name="${prefix}wrist_1_joint">
+        <command_interface name="position"/>
+        <state_interface name="position"/>
+        <state_interface name="velocity"/>
+      </joint>
+      <joint name="${prefix}wrist_2_joint">
+        <command_interface name="position"/>
+        <state_interface name="position"/>
+        <state_interface name="velocity"/>
+      </joint>
+      <joint name="${prefix}wrist_3_joint">
+        <command_interface name="position"/>
+        <state_interface name="position"/>
+        <state_interface name="velocity"/>
+      </joint>
+
+    </ros2_control>
+
+    <!-- Gazebo Classic plugin that reads this <ros2_control> block and
+         exposes the controller_manager. Points at the YAML with the
+         controller definitions. -->
+    <gazebo>
+      <plugin name="gazebo_ros2_control" filename="libgazebo_ros2_control.so">
+        <parameters>$(find ur5_pick_place)/config/ur5_controllers.yaml</parameters>
+      </plugin>
+    </gazebo>
+
+  </xacro:macro>
+
+</robot>

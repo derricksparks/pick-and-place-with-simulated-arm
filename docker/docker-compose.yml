@@ -1,0 +1,31 @@
+services:
+  ros2_humble:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: ur5_pick_place:humble
+    container_name: ur5_pick_place_humble
+    network_mode: host
+    environment:
+      - DISPLAY=${DISPLAY}
+      - QT_X11_NO_MITSHM=1
+      - LIBGL_ALWAYS_SOFTWARE=${LIBGL_ALWAYS_SOFTWARE:-0}
+    volumes:
+      # Live-mount the workspace source so edits on the host show up instantly
+      - ../src:/ws/src
+      # X11 socket for RViz2 / Gazebo GUIs
+      - /tmp/.X11-unix:/tmp/.X11-unix:rw
+      # Keep colcon build artifacts persistent across container restarts
+      - ros2_build_cache:/ws/build
+      - ros2_install_cache:/ws/install
+      - ros2_log_cache:/ws/log
+    devices:
+      - /dev/dri:/dev/dri
+    stdin_open: true
+    tty: true
+    command: bash
+
+volumes:
+  ros2_build_cache:
+  ros2_install_cache:
+  ros2_log_cache:

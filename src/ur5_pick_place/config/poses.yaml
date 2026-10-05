@@ -1,0 +1,22 @@
+# Object poses for the pick-and-place cycle (M5: multi-pose + logging).
+# Fill in real values once the scene (M3) is in place. Frame is whatever
+# planning frame MoveIt is configured with (commonly "base_link" or "world").
+
+poses:
+  - name: pose_1
+    frame_id: base_link
+    position: {x: 0.0, y: 0.0, z: 0.0}
+    orientation: {x: 0.0, y: 0.0, z: 0.0, w: 1.0}
+  - name: pose_2
+    frame_id: base_link
+    position: {x: 0.0, y: 0.0, z: 0.0}
+    orientation: {x: 0.0, y: 0.0, z: 0.0, w: 1.0}
+  - name: pose_3
+    frame_id: base_link
+    position: {x: 0.0, y: 0.0, z: 0.0}
+    orientation: {x: 0.0, y: 0.0, z: 0.0, w: 1.0}
+
+place_pose:
+  frame_id: base_link
+  position: {x: 0.0, y: 0.0, z: 0.0}
+  orientation: {x: 0.0, y: 0.0, z: 0.0, w: 1.0}
