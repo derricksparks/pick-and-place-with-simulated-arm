@@ -1,3 +1,4 @@
+This repo contains of a ur5 arm which is simulated to do pick and  place of the cubes of different sizes
 # Project 1 — Pick-and-place with a simulated arm (ROS2 Humble, Docker)
 
 This is the Humble/Docker environment for Project 1, kept as the fallback path
@@ -99,3 +100,7 @@ docker compose run --rm ros2_humble
 - M1 (Tue): `apt list --installed | grep ros-humble-desktop` to sanity-check the image, then vendor the UR5 xacro into `src/ur5_pick_place/description/` (see the README there).
 - M2: run `ros2 run moveit_setup_assistant moveit_setup_assistant` from inside the container.
 - Keep `NOTES.md` updated at the end of each day — it's the thing that makes progress traceable when you look back at the week.
+
+
+
+origin/main
