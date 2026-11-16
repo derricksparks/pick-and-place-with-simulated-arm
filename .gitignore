@@ -8,6 +8,5 @@ __pycache__/
 *.pyc
 *.egg-info/
 
-# Third-party package: clone it separately (see README)
-src/ur_description/
+# Editor settings
 .vscode/

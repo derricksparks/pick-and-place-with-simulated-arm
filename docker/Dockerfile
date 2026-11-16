@@ -43,6 +43,11 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     ros-humble-moveit-setup-assistant \
     && rm -rf /var/lib/apt/lists/*
 
+# --- Robot model: upstream UR URDF/meshes (used by bringup.launch.py) -------
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    ros-humble-ur-description \
+    && rm -rf /var/lib/apt/lists/*
+
 # --- rosdep init (ok if already initialized in the base image) ---------------
 RUN rosdep update || true
 
