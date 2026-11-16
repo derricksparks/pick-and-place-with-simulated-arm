@@ -26,7 +26,7 @@ setup(
     maintainer="Drake Grace",
     maintainer_email="drakegraceblessing@gmail.com",
     description="Project 1: pick-and-place with a simulated UR5 arm, planned with MoveIt 2 in Gazebo.",
-    license="Apache-2.0",
+    license="MIT",
     tests_require=["pytest"],
     entry_points={
         "console_scripts": [

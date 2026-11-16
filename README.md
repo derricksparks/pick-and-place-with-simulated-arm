@@ -1,63 +1,77 @@
-This repo contains of a ur5 arm which is simulated to do pick and  place of the cubes of different sizes
-# Project 1 — Pick-and-place with a simulated arm (ROS2 Humble, Docker)
+# UR5 Pick-and-Place — ROS 2 Humble · MoveIt 2 · Gazebo
 
-This is the Humble/Docker environment for Project 1, kept as the fallback path
-alongside the native Jazzy setup. Use this container if the native Jazzy
-MoveIt2 binaries hit a packaging gap (see the M2 note in the Daily Plan doc),
-or simply as your primary environment if you'd rather develop entirely inside
-Humble.
+A simulated Universal Robots UR5 that picks cubes of different sizes and places them at target
+poses, using MoveIt 2 for motion planning and `ros2_control` for joint control. It is the first
+project in a five-part portfolio on industrial robot software.
 
-## Layout
+<!-- TODO: replace with a real GIF once M4 (pick-place node) runs end to end -->
+<!-- ![demo](docs/demo.gif) -->
+
+## Status
+
+| Milestone | What it delivers | Status |
+|-----------|------------------|--------|
+| M1 | UR5 spawned in Gazebo Classic, driven through `ros2_control`, Dockerized Humble environment | ✅ Done |
+| M2 | MoveIt 2 config generated with the Setup Assistant; plans executing in RViz | ⏳ Next |
+| M3 | Gripper + cubes in the world; collision objects in the planning scene | ⬜ |
+| M4 | `pick_place_node.py`: approach → grasp → lift → move → place → retreat | ⬜ |
+| M5 | Pick/place poses loaded from `config/poses.yaml`; several cube sizes | ⬜ |
+| Stretch | Cube pose from a simulated camera instead of fixed poses | ⬜ |
+
+## Architecture
+
+```
+            poses.yaml
+                │
+                ▼
+     ┌─────────────────────┐   MoveGroup action    ┌──────────────┐
+     │  pick_place_node    │ ────────────────────▶ │  move_group  │  (MoveIt 2)
+     │  (Python, rclpy)    │ ◀──────────────────── │              │
+     └─────────────────────┘     plan / result     └──────┬───────┘
+                                                          │ FollowJointTrajectory
+                                                          ▼
+                                             ┌──────────────────────────┐
+                                             │ joint_trajectory_        │
+                                             │ controller (ros2_control)│
+                                             └────────────┬─────────────┘
+                                                          ▼
+                                              Gazebo Classic (UR5 + cubes)
+```
+
+## Repository layout
 
 ```
 ur5_pick_place_ws/
-├── docker/
-│   ├── Dockerfile          # ROS2 Humble + Gazebo Classic + MoveIt2
-│   ├── docker-compose.yml  # build/run with GUI (RViz2, Gazebo) support
-│   ├── entrypoint.sh       # sources ROS2 + the workspace overlay
-│   └── .dockerignore
+├── docker/                 # Humble + Gazebo Classic + MoveIt 2 image, compose file with GUI support
 └── src/
-    └── ur5_pick_place/     # the ROS2 package (matches the layout in the plan doc)
-        ├── package.xml
-        ├── setup.py / setup.cfg
-        ├── description/    # URDF/Xacro (vendor the UR5 xacro here — M1)
-        ├── moveit_config/  # MoveIt Setup Assistant output goes here — M2
-        ├── bringup/launch/ # bringup.launch.py — M1/M2
-        ├── ur5_pick_place/ # Python package: pick_place_node.py — M4
-        ├── config/         # poses.yaml — M5
-        └── NOTES.md        # daily log, matches the Daily Plan doc's checklist
+    └── ur5_pick_place/
+        ├── description/    # scene URDF/Xacro that includes the UR5 macro
+        ├── moveit_config/  # MoveIt Setup Assistant output (M2)
+        ├── bringup/launch/ # bringup.launch.py
+        ├── ur5_pick_place/ # Python package: pick_place_node.py (M4)
+        ├── config/         # poses.yaml (M5)
+        └── NOTES.md        # development log
 ```
 
-## One-time host setup (Ubuntu 24.04)
+The UR arm model (URDF, meshes, kinematics) is not copied into this repo. It comes from the
+upstream `ur_description` package, installed as the `ros-humble-ur-description` apt package
+in the Docker image and declared as a dependency in `package.xml`.
 
-Install Docker + Compose if not already present:
+## Quick start (Docker)
 
-```bash
-sudo apt-get update
-sudo apt-get install -y docker.io docker-compose-plugin
-sudo usermod -aG docker $USER   # log out/in after this
-```
-
-Allow the container to open GUI windows (RViz2, Gazebo) on your desktop:
+Requires Docker with the Compose plugin on an Ubuntu host.
 
 ```bash
+# allow the container to open RViz/Gazebo windows (re-run after each login)
 xhost +local:docker
-```
-(Re-run this after every host reboot/login — it's not persistent by design.)
 
-## Build and run
-
-```bash
+git clone https://github.com/derricksparks/pick-and-place-with-simulated-arm.git ur5_pick_place_ws
 cd ur5_pick_place_ws/docker
 docker compose build
 docker compose run --rm ros2_humble
 ```
 
-You'll land in a bash shell inside the container at `/ws`, with `src/`
-live-mounted from your host (`ur5_pick_place_ws/src/`) — edits made on the
-host with VSCode show up instantly inside the container.
-
-Inside the container, first time only:
+Inside the container (first run only):
 
 ```bash
 rosdep update
@@ -66,41 +80,38 @@ colcon build --symlink-install
 source install/setup.bash
 ```
 
-After that, each new shell into the running container just needs:
+Launch the simulation:
 
 ```bash
-source install/setup.bash
+ros2 launch ur5_pick_place bringup.launch.py
 ```
 
-## Quick smoke test
+This starts Gazebo, spawns the arm and brings up `joint_state_broadcaster` and
+`joint_trajectory_controller`. The launch file takes no arguments.
 
-```bash
-# Gazebo opens a window on your host desktop if xhost was set up correctly
-gazebo
-```
+`src/` is bind-mounted from the host, so edits made in VS Code show up immediately in the
+container. Build output is kept in named volumes, so later sessions only need
+`source install/setup.bash`.
 
-If a Gazebo window appears with no X11/DISPLAY errors in the terminal, the
-GUI bridge is working and you're ready to start M1's Tuesday tasks (see the
-Daily Plan doc).
+## Design notes
 
-## Reopening the container later
+- **Why Docker + Humble:** the host runs Ubuntu 24.04, whose native ROS 2 distro is Jazzy.
+  Humble (LTS, still the most common distro in industrial job postings) runs in a container
+  instead of being forced onto an unsupported OS.
+- **Why `ros2_control` from M1:** real UR arms are driven through `ros2_control` by the official
+  `ur_robot_driver`. Using the same controller interface in simulation means the planning code
+  should not need to change when it moves to real hardware.
+- **Gazebo Classic:** chosen for its mature `gazebo_ros2_control` integration on Humble. It has
+  reached end-of-life, so migrating to modern Gazebo (`gz_ros2_control`) is a planned follow-up.
 
-The named volumes (`ros2_build_cache`, `ros2_install_cache`, `ros2_log_cache`)
-persist your `colcon build` output between runs, so you don't need to rebuild
-from scratch each session:
+## Roadmap context
 
-```bash
-cd ur5_pick_place_ws/docker
-docker compose run --rm ros2_humble
-# then just: source install/setup.bash
-```
+This is project 1 of 5: pick-and-place → custom `ros2_control` hardware interface → multi-robot
+cell → digital twin with an OPC-UA bridge → sim-to-real with MuJoCo.
 
-## Next steps (from the Daily Plan doc)
+## License
 
-- M1 (Tue): `apt list --installed | grep ros-humble-desktop` to sanity-check the image, then vendor the UR5 xacro into `src/ur5_pick_place/description/` (see the README there).
-- M2: run `ros2 run moveit_setup_assistant moveit_setup_assistant` from inside the container.
-- Keep `NOTES.md` updated at the end of each day — it's the thing that makes progress traceable when you look back at the week.
-
-
-
-origin/main
+Project code: MIT (see [LICENSE](LICENSE)). The UR description files and meshes are not part of
+this repo; they are installed from the upstream
+[Universal_Robots_ROS2_Description](https://github.com/UniversalRobots/Universal_Robots_ROS2_Description)
+package and keep its license.
