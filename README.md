@@ -12,8 +12,8 @@ project in a five-part portfolio on industrial robot software.
 | Milestone | What it delivers | Status |
 |-----------|------------------|--------|
 | M1 | UR5e spawned in Gazebo Classic, driven through `ros2_control`, Dockerized Humble environment | ✅ Done |
-| M2 | MoveIt 2 config generated with the Setup Assistant; plans executing in RViz | ⏳ Next |
-| M3 | Gripper + cubes in the world; collision objects in the planning scene | ⬜ |
+| M2 | MoveIt 2 config generated with the Setup Assistant; plans from RViz execute on the Gazebo arm | ✅ Done |
+| M3 | Gripper + cubes in the world; collision objects in the planning scene | ⏳ Next |
 | M4 | `pick_place_node.py`: approach → grasp → lift → move → place → retreat | ⬜ |
 | M5 | Pick/place poses loaded from `config/poses.yaml`; several cube sizes | ⬜ |
 | Stretch | Cube pose from a simulated camera instead of fixed poses | ⬜ |
@@ -88,6 +88,15 @@ ros2 launch ur5_pick_place bringup.launch.py
 
 This starts Gazebo, spawns the arm and brings up `joint_state_broadcaster` and
 `joint_trajectory_controller`. The launch file takes no arguments.
+
+Launch the simulation with MoveIt 2 and RViz (drag the arm's goal in the MotionPlanning
+panel, then Plan & Execute):
+
+```bash
+ros2 launch ur5_pick_place_moveit_config moveit_gazebo.launch.py
+```
+
+Add `rviz:=false` to run without the RViz window.
 
 `src/` is bind-mounted from the host, so edits made in VS Code show up immediately in the
 container. Build output is kept in named volumes, so later sessions only need
