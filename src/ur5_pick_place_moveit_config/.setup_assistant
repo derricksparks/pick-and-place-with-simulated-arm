@@ -1,0 +1,10 @@
+moveit_setup_assistant_config:
+  urdf:
+    package: ur5_pick_place
+    relative_path: description/ur5_pick_place.urdf.xacro
+  srdf:
+    relative_path: config/ur5_pick_place.srdf
+  package_settings:
+    author_name: "Drake Grace"
+    author_email: "drakegraceblessing@gmail.com"
+    generated_timestamp: 1795000900

@@ -44,9 +44,9 @@ project in a five-part portfolio on industrial robot software.
 ur5_pick_place_ws/
 ├── docker/                 # Humble + Gazebo Classic + MoveIt 2 image, compose file with GUI support
 └── src/
+    ├── ur5_pick_place_moveit_config/  # MoveIt Setup Assistant output (M2)
     └── ur5_pick_place/
         ├── description/    # scene URDF/Xacro that includes the UR5e macro
-        ├── moveit_config/  # MoveIt Setup Assistant output (M2)
         ├── bringup/launch/ # bringup.launch.py
         ├── ur5_pick_place/ # Python package: pick_place_node.py (M4)
         ├── config/         # poses.yaml (M5)
