@@ -1,13 +1,27 @@
 <?xml version="1.0"?>
-<robot xmlns:xacro="http://wiki.ros.org/xacro" name="$(arg name)">
-   <!-- robot name parameter -->
-   <xacro:arg name="name" default="ur"/>
+<!--
+  Robot description for this project, a UR5e fixed to the world.
+
+  Based on the ur.urdf.xacro file from ur_description, changed so it builds
+  with no arguments, which is how the MoveIt Setup Assistant loads it.
+  The robot name is fixed, and ur_type defaults to ur5e.
+
+  Used by both bringup.launch.py for Gazebo and by the MoveIt config, so the
+  two always see the same robot. The gripper and table are added here in M3.
+  For Gazebo, set the sim_gazebo and simulation_controllers arguments.
+
+  Do not use colons in this comment. xacro copies it into the URDF, and
+  gazebo_ros2_control passes the URDF as a ROS parameter, which is read as
+  YAML. A colon followed by a space breaks that and the controllers never load.
+-->
+<robot xmlns:xacro="http://wiki.ros.org/xacro" name="ur5_pick_place">
+   <!-- robot name, also used as the ros2_control system name -->
+   <xacro:arg name="name" default="ur5_pick_place"/>
    <!-- import main macro -->
    <xacro:include filename="$(find ur_description)/urdf/ur_macro.xacro"/>
 
    <!-- possible 'ur_type' values: ur3, ur5, ur10, ur3e, ur5e, ur7e, ur10e, ur12e, ur16e, ur8long, ur15, ur18, ur20, ur30 -->
-   <!-- the default value should raise an error in case this was called without defining the type -->
-   <xacro:arg name="ur_type" default="ur5x"/>
+   <xacro:arg name="ur_type" default="ur5e"/>
 
    <!-- parameters -->
    <xacro:arg name="tf_prefix" default="" />

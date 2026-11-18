@@ -2,9 +2,9 @@
 M1 bring-up: Gazebo Classic + robot_state_publisher + spawn the UR5e +
 joint_state_broadcaster + joint_trajectory_controller.
 
-Reuses ur_description's own ur.urdf.xacro directly (it already generates the
-<ros2_control> tag and the Gazebo plugin block when sim_gazebo:=true) rather
-than a custom wrapper xacro -- nothing else needed for M1.
+The robot comes from this package's description/ur5_pick_place.urdf.xacro,
+which wraps ur_description's UR macro. With sim_gazebo:=true the macro also
+generates the <ros2_control> tag and the Gazebo plugin block.
 
 Run (after `colcon build --symlink-install && source install/setup.bash`):
     ros2 launch ur5_pick_place bringup.launch.py
@@ -22,21 +22,18 @@ from launch_ros.parameter_descriptions import ParameterValue
 
 
 def generate_launch_description():
-    ur_description_share = get_package_share_directory("ur_description")
     ur5_pick_place_share = get_package_share_directory("ur5_pick_place")
     gazebo_ros_share = get_package_share_directory("gazebo_ros")
 
-    ur_xacro = os.path.join(ur_description_share, "urdf", "ur.urdf.xacro")
+    robot_xacro = os.path.join(ur5_pick_place_share, "description", "ur5_pick_place.urdf.xacro")
     controllers_yaml = os.path.join(ur5_pick_place_share, "config", "ur5_controllers.yaml")
 
-    # Build the robot_description param by running xacro with the args this
-    # project needs: a real ur_type (the file's own default, "ur5x", is not
-    # a valid type), and sim_gazebo + simulation_controllers so the macro
-    # emits the <ros2_control> tag and the Gazebo plugin block.
+    # Build the robot_description param by running xacro on the project's own
+    # description (the same file the MoveIt config uses). Name and ur_type
+    # come from the file's defaults; sim_gazebo + simulation_controllers make
+    # the UR macro emit the Gazebo <ros2_control> block and plugin.
     robot_description_content = Command([
-        "xacro ", ur_xacro,
-        " name:=ur5_pick_place",
-        " ur_type:=ur5e",
+        "xacro ", robot_xacro,
         " sim_gazebo:=true",
         " simulation_controllers:=", controllers_yaml,
     ])
