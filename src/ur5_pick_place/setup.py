@@ -14,7 +14,7 @@ setup(
         # Launch files
         (os.path.join("share", package_name, "bringup", "launch"),
          glob("bringup/launch/*.launch.py")),
-        # URDF / Xacro description files (vendor the UR5 xacro here in M1)
+        # URDF / Xacro description files (vendor the UR5e xacro here in M1)
         (os.path.join("share", package_name, "description"),
          glob("description/*")),
         # Pose / scene config used in M5
@@ -25,7 +25,7 @@ setup(
     zip_safe=True,
     maintainer="Drake Grace",
     maintainer_email="drakegraceblessing@gmail.com",
-    description="Project 1: pick-and-place with a simulated UR5 arm, planned with MoveIt 2 in Gazebo.",
+    description="Project 1: pick-and-place with a simulated UR5e arm, planned with MoveIt 2 in Gazebo.",
     license="MIT",
     tests_require=["pytest"],
     entry_points={

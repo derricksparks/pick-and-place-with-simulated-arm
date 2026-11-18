@@ -1,5 +1,5 @@
 """
-M1 bring-up: Gazebo Classic + robot_state_publisher + spawn the UR5 +
+M1 bring-up: Gazebo Classic + robot_state_publisher + spawn the UR5e +
 joint_state_broadcaster + joint_trajectory_controller.
 
 Reuses ur_description's own ur.urdf.xacro directly (it already generates the

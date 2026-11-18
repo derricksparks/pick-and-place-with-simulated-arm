@@ -1,6 +1,6 @@
-# UR5 Pick-and-Place — ROS 2 Humble · MoveIt 2 · Gazebo
+# UR5e Pick-and-Place — ROS 2 Humble · MoveIt 2 · Gazebo
 
-A simulated Universal Robots UR5 that picks cubes of different sizes and places them at target
+A simulated Universal Robots UR5e (`ur_type:=ur5e`) that picks cubes of different sizes and places them at target
 poses, using MoveIt 2 for motion planning and `ros2_control` for joint control. It is the first
 project in a five-part portfolio on industrial robot software.
 
@@ -11,7 +11,7 @@ project in a five-part portfolio on industrial robot software.
 
 | Milestone | What it delivers | Status |
 |-----------|------------------|--------|
-| M1 | UR5 spawned in Gazebo Classic, driven through `ros2_control`, Dockerized Humble environment | ✅ Done |
+| M1 | UR5e spawned in Gazebo Classic, driven through `ros2_control`, Dockerized Humble environment | ✅ Done |
 | M2 | MoveIt 2 config generated with the Setup Assistant; plans executing in RViz | ⏳ Next |
 | M3 | Gripper + cubes in the world; collision objects in the planning scene | ⬜ |
 | M4 | `pick_place_node.py`: approach → grasp → lift → move → place → retreat | ⬜ |
@@ -35,7 +35,7 @@ project in a five-part portfolio on industrial robot software.
                                              │ controller (ros2_control)│
                                              └────────────┬─────────────┘
                                                           ▼
-                                              Gazebo Classic (UR5 + cubes)
+                                              Gazebo Classic (UR5e + cubes)
 ```
 
 ## Repository layout
@@ -45,7 +45,7 @@ ur5_pick_place_ws/
 ├── docker/                 # Humble + Gazebo Classic + MoveIt 2 image, compose file with GUI support
 └── src/
     └── ur5_pick_place/
-        ├── description/    # scene URDF/Xacro that includes the UR5 macro
+        ├── description/    # scene URDF/Xacro that includes the UR5e macro
         ├── moveit_config/  # MoveIt Setup Assistant output (M2)
         ├── bringup/launch/ # bringup.launch.py
         ├── ur5_pick_place/ # Python package: pick_place_node.py (M4)
